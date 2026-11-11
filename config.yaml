@@ -22,15 +22,57 @@ exclude:
 #   js:   set to true if the jobs don't show up (page loads them with JavaScript)
 #   keywords: optional extra keywords just for this company
 companies:
-  - name: Example Company A
-    url: https://www.example.com/careers
+  - name: JMMB
+    url: https://jm.jmmb.com/careers-page
     js: false
 
-  - name: Example Company B
-    url: https://www.example.org/jobs
+  - name: CIBC
+    url: https://www.candidatemanager.net/cm/p/pJobs.aspx?mid=YFYU&sid=BBYGT&jl=Jamaica
     js: false
-    keywords:
-      - accountant
+
+  - name: VMBS
+    url: https://www.candidatemanager.net/cm/p/pJobs.aspx?mid=CXAZUF&sid=YDDB
+    js: false
+
+  - name: GraceKennedy
+    url: https://careers.gracekennedy.com/search/?createNewAlert=false&q=&locationsearch=jamaica&optionsFacetsDD_dept=&optionsFacetsDD_customfield1=
+    js: false
+
+  - name: JN
+    url: https://jngroup.zohorecruit.com/jobs/careers
+    js: false
+
+  - name: Digicel
+    url: https://careers.digicelgroup.com/search/?createNewAlert=false&q=&locationsearch=jamaica&optionsFacetsDD_country=&optionsFacetsDD_customfield1=
+    js: false
+
+  - name: NCB
+    url: https://www.caribbeanjobs.com/NCB-Financial-Group-Jobs-46.aspx
+    js: false
+
+  - name: SeProd
+    url: https://www.seprod.com/careers/
+    js: false
+
+  - name: Barita
+    url: https://www.barita.com/about-us/careers/
+    js: false
+
+  - name: JamIcta
+    url: https://icta.gov.jm/work-with-us/jobs/
+    js: false
+
+  - name: JCA
+    url: https://jca.gov.jm/about-us/careers/
+    js: false
+
+  - name: NHT
+    url: https://www.nht.gov.jm/careers
+    js: false
+
+  - name: Sagicor
+    url: https://career4.successfactors.com/career?company=sagicorfinP2&career%5fns=job%5flisting%5fsummary&navBarLevel=JOB%5fSEARCH&_s.crb=GTOHON%2f8avBuEU79PqDjbcU394IeAzqtxwiXZeNTi58%3d
+    js: false
 
 # ===================== Alerts =====================
 # On GitHub Actions, DON'T put these here (the repo is public).
