@@ -1,0 +1,48 @@
+# ===================== Job Watcher settings =====================
+
+# How often to check when running with --loop
+check_every_minutes: 60
+
+# Job titles / words to look for on EVERY company's page (not case-sensitive)
+keywords:
+  - analyst
+  - software developer
+  - IT
+  - engineer
+  - developer
+  - .net
+
+# Skip anything containing these words
+exclude:
+  - intern
+
+# Companies to watch. Replace these examples with your own.
+#   name: label shown in alerts
+#   url:  the page that LISTS the jobs (not the homepage)
+#   js:   set to true if the jobs don't show up (page loads them with JavaScript)
+#   keywords: optional extra keywords just for this company
+companies:
+  - name: Example Company A
+    url: https://www.example.com/careers
+    js: false
+
+  - name: Example Company B
+    url: https://www.example.org/jobs
+    js: false
+    keywords:
+      - accountant
+
+# ===================== Alerts =====================
+# On GitHub Actions, DON'T put these here (the repo is public).
+# Add them as repository secrets instead: NTFY_TOPIC, EMAIL_FROM,
+# EMAIL_TO, EMAIL_PASSWORD. See README.md.
+# The settings below are only for running on your own computer.
+alerts:
+  ntfy_topic: ""
+  email:
+    enabled: false
+    from: you@gmail.com
+    to: you@gmail.com
+    password: ""
+    smtp_server: smtp.gmail.com
+    smtp_port: 587

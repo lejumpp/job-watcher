@@ -1,0 +1,5 @@
+requests
+beautifulsoup4
+pyyaml
+# Optional, only for sites marked js: true
+# playwright
