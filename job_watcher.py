@@ -111,11 +111,31 @@ def extract_candidates(html: str, base_url: str) -> list[dict]:
     return found
 
 
+def keyword_found(keyword: str, text: str) -> bool:
+    """Whole-word match. Short ALL-CAPS keywords (e.g. IT, QA) are matched
+    case-sensitively so "IT" doesn't match the everyday word "it"."""
+    pattern = r"(?<!\w)" + re.escape(keyword) + r"(?!\w)"
+    if keyword.isupper() and len(keyword) <= 4:
+        return re.search(pattern, text) is not None
+    return re.search(pattern, text, re.IGNORECASE) is not None
+
+
 def matches(text: str, keywords: list[str], exclude: list[str]) -> bool:
-    t = text.lower()
-    if any(x.lower() in t for x in exclude):
+    if any(keyword_found(x, text) for x in exclude):
         return False
-    return any(re.search(r"\b" + re.escape(k.lower()) + r"\b", t) for k in keywords)
+    return any(keyword_found(k, text) for k in keywords)
+
+
+def dedupe_by_link(hits: list[dict], page_url: str) -> list[dict]:
+    """The same job often appears twice (e.g. the link text and its list item).
+    Keep one entry per job link, using the shortest title."""
+    by_link, no_link = {}, []
+    for h in hits:
+        if h["link"] == page_url:
+            no_link.append(h)
+        elif h["link"] not in by_link or len(h["title"]) < len(by_link[h["link"]]["title"]):
+            by_link[h["link"]] = h
+    return list(by_link.values()) + no_link
 
 
 # ---------------------------------------------------------------- alerts
@@ -186,10 +206,13 @@ def run_check() -> None:
             html = fetch_html(url, use_browser=c.get("js", False))
             candidates = extract_candidates(html, url)
             hits = [x for x in candidates if matches(x["title"], keywords, exclude)]
+            hits = dedupe_by_link(hits, url)
             log(f"{name}: scanned {len(candidates)} items, {len(hits)} match(es)")
+            seen_links = {v.get("link") for v in seen.values() if v.get("company") == name}
             for h in hits:
                 jid = job_id(name, h["title"], h["link"])
-                if jid not in seen:
+                already = jid in seen or (h["link"] != url and h["link"] in seen_links)
+                if not already:
                     seen[jid] = {"company": name, **h, "first_seen": datetime.now().isoformat()}
                     new_jobs.append({"company": name, **h})
         except Exception as e:
