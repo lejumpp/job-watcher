@@ -60,7 +60,7 @@ about NEW postings.
   days. The bot's own commits count as activity, but if no new jobs show up
   for two months, open the Actions tab and re-enable the schedule.
 - **A company shows "scanned 0 items" or misses jobs:** its page probably loads
-  jobs with JavaScript. Tell Claude which site it is and it can adjust that one.
+  jobs with JavaScript.
 - **Some companies post only on LinkedIn or CaribbeanJobs:** use the job
   board's search-results page as that company's `url`.
 - **Start over:** delete `seen_jobs.json` from the repo, and the next run
