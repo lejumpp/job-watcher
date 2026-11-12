@@ -26,6 +26,10 @@ companies:
     url: https://jm.jmmb.com/careers-page
     js: false
 
+  - name: Intellibus
+    url: https://www.intellibus.com/jobs
+    js: false
+    
   - name: CIBC
     url: https://www.candidatemanager.net/cm/p/pJobs.aspx?mid=YFYU&sid=BBYGT&jl=Jamaica
     js: false
