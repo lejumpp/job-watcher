@@ -72,3 +72,4 @@ pip install -r requirements.txt
 python job_watcher.py          # one check
 python job_watcher.py --loop   # check every hour while the computer is on
 ```
+
