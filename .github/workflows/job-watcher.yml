@@ -25,7 +25,13 @@ jobs:
           cache: pip
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          # Only install the browser if a site in config.yaml needs it (js: true)
+          if grep -Eq '^\s*js:\s*true' config.yaml; then
+            pip install playwright
+            playwright install --with-deps chromium
+          fi
 
       - name: Check career pages
         env:
