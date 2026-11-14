@@ -78,6 +78,10 @@ companies:
     url: https://career4.successfactors.com/career?company=sagicorfinP2&career%5fns=job%5flisting%5fsummary&navBarLevel=JOB%5fSEARCH&_s.crb=GTOHON%2f8avBuEU79PqDjbcU394IeAzqtxwiXZeNTi58%3d
     js: false
 
+  - name: CBGROUP
+    url: https://www.mycbgroup.com/careers#apply
+    js: false
+
 # ===================== Alerts =====================
 # On GitHub Actions, DON'T put these here (the repo is public).
 # Add them as repository secrets instead: NTFY_TOPIC, EMAIL_FROM,
