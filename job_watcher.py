@@ -82,7 +82,17 @@ def fetch_html(url: str, use_browser: bool) -> str:
         with sync_playwright() as p:
             browser = p.chromium.launch()
             page = browser.new_page(user_agent=HEADERS["User-Agent"])
-            page.goto(url, wait_until="networkidle", timeout=60000)
+            # "networkidle" can hang forever on sites with trackers, so load the
+            # page, then give its scripts time to draw the job list.
+            page.goto(url, wait_until="domcontentloaded", timeout=60000)
+            try:
+                page.wait_for_load_state("networkidle", timeout=15000)
+            except Exception:
+                pass
+            # Scroll to the bottom to trigger any lazy-loaded listings
+            for _ in range(5):
+                page.mouse.wheel(0, 4000)
+                page.wait_for_timeout(1000)
             html = page.content()
             browser.close()
             return html
@@ -92,22 +102,46 @@ def fetch_html(url: str, use_browser: bool) -> str:
     return r.text
 
 
+BLOCK_TAGS = ["div", "p", "span", "h1", "h2", "h3", "h4", "h5", "h6", "li", "a", "td", "section", "article"]
+
+
+def find_link(el, base_url: str) -> str:
+    """Find the job's link: the element itself, a link inside it, a link
+    around it, or a link elsewhere in the same card (up to 4 levels up)."""
+    link_el = el if el.name == "a" and el.get("href") else None
+    link_el = link_el or el.find("a", href=True) or el.find_parent("a", href=True)
+    parent = el.parent
+    for _ in range(4):
+        if link_el or parent is None:
+            break
+        links = parent.find_all("a", href=True)
+        if len(links) == 1:          # only use it if the card has exactly one link
+            link_el = links[0]
+        elif len(links) > 1:
+            break
+        parent = parent.parent
+    href = link_el.get("href") if link_el else None
+    return urljoin(base_url, href) if href else base_url
+
+
 def extract_candidates(html: str, base_url: str) -> list[dict]:
-    """Pull out text snippets that could be job titles (links, headings, list items)."""
+    """Pull out short text snippets that could be job titles."""
     soup = BeautifulSoup(html, "html.parser")
     for tag in soup(["script", "style", "noscript", "header", "footer", "nav"]):
         tag.decompose()
 
     found, seen_text = [], set()
-    for el in soup.find_all(["a", "h1", "h2", "h3", "h4", "h5", "li", "td", "strong"]):
+    for el in soup.find_all(["a", "h1", "h2", "h3", "h4", "h5", "h6", "li", "td", "strong",
+                             "div", "span", "p"]):
+        # For generic containers, only look at the innermost ones (e.g. a title
+        # <div> inside a job card), not the whole card.
+        if el.name in ("div", "span", "p") and el.find(BLOCK_TAGS):
+            continue
         text = " ".join(el.get_text(" ", strip=True).split())
         if not (3 <= len(text) <= 150) or text.lower() in seen_text:
             continue
         seen_text.add(text.lower())
-        link_el = el if el.name == "a" else el.find("a") or el.find_parent("a")
-        href = link_el.get("href") if link_el else None
-        link = urljoin(base_url, href) if href else base_url
-        found.append({"title": text, "link": link})
+        found.append({"title": text, "link": find_link(el, base_url)})
     return found
 
 
